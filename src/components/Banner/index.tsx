@@ -30,10 +30,14 @@ export const Banner = ({
 	console.log(config);
 
 	class MkRenderer extends MarkdownRenderer {
+		file: TFile;
 		constructor() {
 			super(containerEl);
+			this.file = app.vault.getFileByPath(context.sourcePath);
 		}
 	}
+
+	const renderer = new MkRenderer();
 
 	return (
 		<div id="twcss">

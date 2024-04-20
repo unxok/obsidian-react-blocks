@@ -55,7 +55,7 @@ export default class MyObsidianPlugin extends Plugin {
 		ReactComp: (props: any) => React.JSX.Element,
 		props?: any,
 	) {
-		this.registerMarkdownCodeBlockProcessor(langName, (s, e, i) => {
+		this.registerMarkdownCodeBlockProcessor(langName, (s, e, c) => {
 			let data = loadData(s);
 			e.empty();
 			const root = createRoot(e);
@@ -64,6 +64,8 @@ export default class MyObsidianPlugin extends Plugin {
 				<React.StrictMode>
 					<ReactComp
 						data={s}
+						containerEl={e}
+						context={c}
 						{...props}
 						// getSectionInfo={() => i.getSectionInfo(e)}
 						// settings={this.settings}
