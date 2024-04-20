@@ -48,11 +48,15 @@ esbuild
 				assets: [
 					{
 						from: ["./manifest.json"],
-						to: ["./build/my-obsidian-plugin/manifest.json"],
+						to: [
+							"test-vault/.obsidian/plugins/obsidian-react-blocks/manifest.json",
+						],
 					},
 					{
 						from: ["./main.js"],
-						to: ["./build/my-obsidian-plugin/main.js"],
+						to: [
+							"test-vault/.obsidian/plugins/obsidian-react-blocks/main.js",
+						],
 					},
 				],
 			}),

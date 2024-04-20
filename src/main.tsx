@@ -1,11 +1,12 @@
 import { Plugin } from "obsidian";
 
-import React from "react";
+import React, { ReactElement, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { defaultSettings, TSettings } from "@/settings";
 import { MyObsidianPluginSettingsTab } from "@/settings-tab";
 import { loadData } from "@/saveload";
+import { Banner, BannerCommand, makeBannerSettings } from "./components/Banner";
 
 import App from "@/components/App";
 
@@ -14,34 +15,62 @@ export default class MyObsidianPlugin extends Plugin {
 
 	async onload(): Promise<void> {
 		await this.loadSettings();
+		const blockSettings = [makeBannerSettings];
 
-		this.addSettingTab(new MyObsidianPluginSettingsTab(this.app, this));
+		this.registerBlock("banner", Banner);
+		this.addCommand(BannerCommand);
 
-		this.registerMarkdownCodeBlockProcessor(
-			"my-obsidian-plugin",
-			(s, e, i) => {
-				let data = loadData(s);
-				e.empty();
-				const root = createRoot(e);
-				root.render(
-					<React.StrictMode>
-						<App
-							data={data}
-							getSectionInfo={() => i.getSectionInfo(e)}
-							settings={this.settings}
-							app={this.app}
-						/>
-					</React.StrictMode>
-				);
-			}
+		this.addSettingTab(
+			new MyObsidianPluginSettingsTab(this.app, this, blockSettings),
 		);
+		// this.registerMarkdownCodeBlockProcessor(
+		// 	"obsidian-react-blocks",
+		// 	(s, e, i) => {
+		// 		let data = loadData(s);
+		// 		e.empty();
+		// 		const root = createRoot(e);
+		// 		root.render(
+		// 			<React.StrictMode>
+		// 				<App
+		// 					data={data}
+		// 					getSectionInfo={() => i.getSectionInfo(e)}
+		// 					settings={this.settings}
+		// 					app={this.app}
+		// 				/>
+		// 			</React.StrictMode>,
+		// 		);
+		// 	},
+		// );
+		// this.addCommand({
+		// 	id: `insert`,
+		// 	name: `Insert My Plugin`,
+		// 	editorCallback: (e, _) => {
+		// 		e.replaceSelection("```obsidian-react-blocks\n```\n");
+		// 	},
+		// });
+	}
 
-		this.addCommand({
-			id: `insert`,
-			name: `Insert My Plugin`,
-			editorCallback: (e, _) => {
-				e.replaceSelection("```my-obsidian-plugin\n```\n");
-			},
+	registerBlock(
+		langName: string,
+		ReactComp: (props: any) => React.JSX.Element,
+		props?: any,
+	) {
+		this.registerMarkdownCodeBlockProcessor(langName, (s, e, i) => {
+			let data = loadData(s);
+			e.empty();
+			const root = createRoot(e);
+			// const Element = ReactComp ?? 'div'
+			root.render(
+				<React.StrictMode>
+					<ReactComp
+						data={s}
+						{...props}
+						// getSectionInfo={() => i.getSectionInfo(e)}
+						// settings={this.settings}
+						// app={this.app}
+					/>
+				</React.StrictMode>,
+			);
 		});
 	}
 
@@ -49,7 +78,7 @@ export default class MyObsidianPlugin extends Plugin {
 		this.settings = Object.assign(
 			{},
 			defaultSettings,
-			await this.loadData()
+			await this.loadData(),
 		);
 	}
 

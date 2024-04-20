@@ -4,7 +4,7 @@ const App = (props: any) => {
 	const { data, getSectionInfo, settings, app } = props;
 
 	return (
-		<div className="my-obsidian-plugin" id="my-obsidian-plugin">
+		<div className="obsidian-react-blocks" id="obsidian-react-blocks">
 			{/* Content here */}
 		</div>
 	);
